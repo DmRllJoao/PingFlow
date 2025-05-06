@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>PingFlow - Teste de Velocidade</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 />
-
 </head>
 <body>
   <header class="navbar">
@@ -28,9 +27,20 @@
     </nav>
   </header>
   
+  
+ 
+  
+
   <div class="container">
     <h1>PingFlow</h1>
     <p class="subtitulo">Teste sua conexão com estilo</p>
+    <div id="status">Pronto para testar...</div>
+
+    <canvas id="speedometer" width="300" height="300"></canvas>
+
+    <div class="value">
+      <span id="speed">0</span> Mbps
+    </div>
 
     <div class="resultados">
       <div class="resultado">
@@ -46,8 +56,9 @@
         <p id="upload">-- Mbps</p>
       </div>
     </div>
+      
 
-    <button id="startBtn">Iniciar Teste</button>
+    <button id="start">INICIAR</button>
   </div>
 
   <script src="script.js"></script>

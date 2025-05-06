@@ -56,7 +56,16 @@ body {
 body {
   padding-top: 70px; /* espaço para o menu fixo */
 }
-
+/* Cabeçalho fixo com sombra */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  max-width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
 .container {
   text-align: center;
@@ -70,7 +79,6 @@ body {
   flex-direction: column;
   align-items: center;
 }
-
 h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
@@ -82,6 +90,44 @@ h1 {
   color: #cfcfcf;
 }
 
+
+
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -250px; /* Começa fora da tela */
+  width: 250px;
+  height: 100%;
+  background-color: #dddddd;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: right 0.3s ease; /* Certifique-se de que está ativo */
+}
+
+.side-menu.open {
+  right: 0; /* Desliza para dentro */
+}
+
+/* Conteúdo principal com espaço para o cabeçalho fixo */
+.container {
+  margin-top: 80px;
+}
+
+#speedometer {
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 20px #3a6937;
+  margin-top: 20px;
+}
+
+.value {
+  font-size: 2em;
+  margin: 20px 0;
+}
 .resultados {
   display: flex;
   justify-content: space-around;
@@ -105,7 +151,11 @@ h1 {
   font-weight: bold;
 }
 
-button#startBtn {
+.details {
+  margin: 10px;
+}
+
+#start {
   width: 150px;
   height: 150px;
   border-radius: 50%;
@@ -122,9 +172,13 @@ button#startBtn {
   justify-content: center;
 }
 
-button#startBtn:hover {
-  background-color: #00e6e6;
-  color: #000;
+#start:hover {
   box-shadow: 0 0 25px rgba(0, 230, 230, 0.8);
-  transform: scale(1.05);
+
+}
+
+#status {
+  margin-top: 10px;
+  font-size: 1.1em;
+  color: #8b949e;
 }

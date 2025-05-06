@@ -1,50 +1,146 @@
-// Quando clicar no botão, executa os testes
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("startBtn").addEventListener("click", () => {
-    medirPing();
-    medirDownload();
-    medirUpload();
+const downloadElement = document.getElementById('download');
+const canvas = document.getElementById('speedometer');
+const ctx = canvas.getContext('2d');
+const speedElement = document.getElementById('speed');
+const pingElement = document.getElementById('ping');
+const uploadElement = document.getElementById('upload');
+const startButton = document.getElementById('start');
+const status = document.getElementById('status');
+
+let currentSpeed = 0;
+let targetSpeed = 0;
+let animating = false;
+
+function drawZones() {
+  const zones = [
+    { color: '#2ecc71', start: Math.PI, end: Math.PI + Math.PI / 3 },
+    { color: '#f1c40f', start: Math.PI + Math.PI / 3, end: Math.PI + 2 * Math.PI / 3 },
+    { color: '#e74c3c', start: Math.PI + 2 * Math.PI / 3, end: 2 * Math.PI }
+  ];
+
+  zones.forEach(zone => {
+    ctx.beginPath();
+    ctx.lineWidth = 20;
+    ctx.strokeStyle = zone.color;
+    ctx.arc(150, 150, 100, zone.start, zone.end);
+    ctx.stroke();
   });
+}
+
+function drawPointer(speed) {
+  ctx.save();
+  ctx.translate(150, 150);
+
+  let angle = Math.PI + (speed / 500) * Math.PI;
+  ctx.rotate(angle);
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(80, 0);
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawCenter() {
+  ctx.beginPath();
+  ctx.arc(150, 150, 8, 0, 2 * Math.PI);
+  ctx.fillStyle = '#000000';
+  ctx.fill();
+}
+
+function drawSpeedometer(speed) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawZones();
+  drawPointer(speed);
+  drawCenter();
+}
+
+function animate() {
+  drawSpeedometer(currentSpeed);
+
+  if (Math.abs(currentSpeed - targetSpeed) > 1) {
+    currentSpeed += (targetSpeed - currentSpeed) * 0.1;
+    requestAnimationFrame(animate);
+  } else {
+    currentSpeed = targetSpeed;
+    drawSpeedometer(currentSpeed);
+  }
+
+  speedElement.textContent = Math.floor(currentSpeed);
+}
+
+async function simulatePing() {
+  status.textContent = "Testando Ping...";
+  await new Promise(res => setTimeout(res, 1000));
+  const ping = Math.floor(Math.random() * 30 + 10);
+  pingElement.textContent = ping;
+}
+
+async function simulateDownload() {
+    status.textContent = "Testando Download...";
+    targetSpeed = 0;
+    animate();
+    
+    for (let i = 0; i < 20; i++) {
+      await new Promise(res => setTimeout(res, 200));
+      targetSpeed = Math.random() * 200 + 50;
+      animate();
+    }
+  
+    const finalDownload = Math.random() * 200 + 100;
+    targetSpeed = finalDownload;
+    speedElement.textContent = finalDownload.toFixed(2);
+    downloadElement.textContent = finalDownload.toFixed(2);
+    await new Promise(res => setTimeout(res, 1000));
+  }
+  
+
+async function simulateUpload() {
+  status.textContent = "Testando Upload...";
+  targetSpeed = 0;
+  animate();
+
+  for (let i = 0; i < 15; i++) {
+    await new Promise(res => setTimeout(res, 150));
+    targetSpeed = Math.random() * 100 + 20;
+    animate();
+  }
+
+  const finalUpload = Math.random() * 100 + 30;
+  uploadElement.textContent = finalUpload.toFixed(2);
+  targetSpeed = finalUpload;
+  animate();
+}
+
+startButton.addEventListener('click', async () => {
+  // Reset
+  currentSpeed = 0;
+  targetSpeed = 0;
+  speedElement.textContent = '0';
+  pingElement.textContent = '-';
+  uploadElement.textContent = '-';
+  drawSpeedometer(0);
+  status.textContent = "Iniciando teste...";
+
+  await new Promise(res => setTimeout(res, 500));
+
+  await simulatePing();
+  await simulateDownload();
+  await simulateUpload();
+
+  status.textContent = "Teste concluído ✅";
+  document.querySelector('.hamburger').addEventListener('click', () => {
+    document.getElementById('sideMenu').classList.toggle('open');
+  });
+  
+  document.querySelector('.hamburger').addEventListener('click', () => {
+    const menu = document.getElementById('sideMenu');
+    menu.classList.toggle('open'); // Adiciona ou remove a classe "open"
+  });
+  
+
 });
 
-// ======== Função para medir o PING =========
-function medirPing() {
-  const url = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
-  const startTime = Date.now();
-
-  fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" })
-    .then(() => {
-      const endTime = Date.now();
-      const ping = endTime - startTime;
-      document.getElementById("ping").textContent = `${ping} ms`;
-    })
-    .catch(() => {
-      document.getElementById("ping").textContent = "Erro";
-    });
-}
-
-// ======== Função para medir o DOWNLOAD SIMULADO =========
-function medirDownload() {
-  const dataSize = 10 * 1024 * 1024; // 10MB
-  const startTime = performance.now();
-
-  setTimeout(() => {
-    const endTime = performance.now();
-    const duration = (endTime - startTime) / 1000;
-    const speedMbps = ((dataSize * 8) / duration / 1024 / 1024).toFixed(2);
-    document.getElementById("download").textContent = `${speedMbps} Mbps`;
-  }, 200);
-}
-
-// ======== Função para medir o UPLOAD SIMULADO =========
-function medirUpload() {
-  const dataSize = 20 * 1024 * 1024; // 20MB
-  const startTime = performance.now();
-
-  setTimeout(() => {
-    const endTime = performance.now();
-    const duration = (endTime - startTime) / 1000;
-    const speedMbps = ((dataSize * 8) / duration / 1024 / 1024).toFixed(2);
-    document.getElementById("upload").textContent = `${speedMbps} Mbps`;
-  }, 300);
-}
